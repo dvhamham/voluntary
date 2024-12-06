@@ -13,10 +13,16 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // Detect the browser or system language
-    const browserLang = this.translate.getBrowserLang() || 'en'; // Set the default language to 'en' if no language is detected
-    this.translate.setDefaultLang(browserLang); // Configure the default language
-    this.translate.use(browserLang); // Use the detected or default language
+    const browserLang = this.translate.getBrowserLang();
+
+    // Check if the detected language is supported (fr or en)
+    const supportedLang = browserLang === 'fr' || browserLang === 'en' ? browserLang : 'en';
+
+    // Set and use the appropriate language
+    this.translate.setDefaultLang(supportedLang);
+    this.translate.use(supportedLang);
   }
+
 
   // Function to switch language dynamically
   switchLanguage(language: string) {
