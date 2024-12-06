@@ -1,6 +1,27 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { provideHttpClient } from '@angular/common/http';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'; // Correct library import
+import { HttpClient } from '@angular/common/http';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+// Define a factory function to load translations
+export function HttpLoaderFactory(http: HttpClient) {
+  // Configure the loader to fetch translation files from the 'i18n/' folder
+  // Translation files are expected to be in JSON format with '.json' extension
+  return new TranslateHttpLoader(http, 'i18n/', '.json');
+}
+
+// Application bootstrap configuration
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideHttpClient(), // Provide the Angular HttpClient service
+    ...TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader, // Define the translation loader
+        useFactory: HttpLoaderFactory, // Use the factory function for translation loading
+        deps: [HttpClient], // Specify dependencies for the factory function
+      },
+    }).providers || [], // Add translation module providers
+  ],
+}).catch(err => console.error(err)); // Handle errors during application bootstrap
